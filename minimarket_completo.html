@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimarket - Sistema Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .scanner-section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 15px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #scanner-video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 60%;
+            border: 3px solid #00ff00;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #00ff00;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0%, 100% { top: 0; }
+            50% { top: 100%; }
+        }
+
+        .btn-scan {
+            padding: 12px 30px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+
+        .btn-scan.stop {
+            background: #dc3545;
+        }
+
+        .manual-input {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .manual-input input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .cart-section {
+            padding: 15px;
+        }
+
+        .cart-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-details {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .cart-item-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #28a745;
+            margin-right: 10px;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-qty {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .qty-display {
+            font-weight: 700;
+            font-size: 16px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .cart-total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .cart-total-row.main {
+            font-size: 24px;
+            font-weight: 700;
+            padding-top: 10px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .payment-section {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 15px;
+        }
+
+        .payment-title {
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .payment-method {
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .payment-method.selected {
+            border-color: #667eea;
+            background: #e7f3ff;
+        }
+
+        .payment-method-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .payment-method-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-clear-cart {
+            width: 100%;
+            padding: 12px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .import-export-section {
+            padding: 15px;
+            background: #e7f3ff;
+            border-bottom: 2px solid #b3d9ff;
+            display: flex;
+            gap: 10px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 10px 15px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .btn-export {
+            flex: 1;
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .search-box {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-section {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .products-list {
+            padding: 15px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .product-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212529;
+            flex: 1;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .product-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .price {
+            color: #28a745;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .help-text {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏪 Minimarket</h1>
+            <p>Sistema Completo</p>
+            <div class="cart-badge" id="cartBadge" style="display: none;">0</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('venta')">🛒 Venta</button>
+            <button class="tab" onclick="switchTab('productos')">📦 Productos</button>
+        </div>
+
+        <!-- TAB VENTA -->
+        <div id="venta" class="tab-content active">
+            <div class="scanner-section">
+                <h3 style="margin-bottom: 15px;">Escanear Código de Barras</h3>
+                
+                <div id="cameraHelpMessage" style="display: none;"></div>
+                
+                <div class="scanner-container" id="scannerContainer" style="display: none;">
+                    <video id="scanner-video" playsinline></video>
+                    <div class="scanner-overlay">
+                        <div class="scanner-line"></div>
+                    </div>
+                </div>
+                <button class="btn-scan" id="btnStartScan" onclick="startScanner()">📷 Iniciar Escáner</button>
+                <button class="btn-scan stop" id="btnStopScan" onclick="stopScanner()" style="display: none;">⏹️ Detener</button>
+                
+                <div class="manual-input">
+                    <label style="font-weight: 600; margin-bottom: 10px; display: block;">💡 Ingreso manual de código:</label>
+                    <input type="text" id="manualCode" placeholder="Código del producto" onkeypress="if(event.key==='Enter') searchAndAddProduct()">
+                    <button class="btn btn-primary" onclick="searchAndAddProduct()">🔍 Buscar y Agregar</button>
+                </div>
+            </div>
+
+            <div class="cart-section">
+                <h3 style="margin-bottom: 15px;">Canasta de Compra</h3>
+                <div id="cartItems"></div>
+                
+                <div class="cart-total" id="cartTotal" style="display: none;">
+                    <div class="cart-total-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0</span>
+                    </div>
+                    <div class="cart-total-row main">
+                        <span>TOTAL:</span>
+                        <span id="total">$0</span>
+                    </div>
+                </div>
+
+                <div class="payment-section" id="paymentSection" style="display: none;">
+                    <div class="payment-title">Forma de Pago:</div>
+                    <div class="payment-methods">
+                        <div class="payment-method" onclick="selectPaymentMethod('efectivo')">
+                            <div class="payment-method-icon">💵</div>
+                            <div class="payment-method-name">Efectivo</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPaymentMethod('debito')">
+                            <div class="payment-method-icon">💳</div>
+                            <div class="payment-method-name">Débito</div>
+                        </div>
+                    </div>
+                    <button class="btn-checkout" onclick="checkout()">✅ Finalizar Venta</button>
+                    <button class="btn-clear-cart" onclick="clearCart()">🗑️ Vaciar Canasta</button>
+                </div>
+
+                <div class="empty-state" id="emptyCart">
+                    <div class="empty-state-icon">🛒</div>
+                    <p>Canasta vacía</p>
+                    <p style="font-size: 12px; margin-top: 5px;">Escanea o busca productos para agregar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB PRODUCTOS -->
+        <div id="productos" class="tab-content">
+            <div class="import-export-section">
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".csv,.txt,.xlsx,.xls" onchange="importFile(event)">
+                    <label for="fileInput" class="file-input-label">📥 Importar</label>
+                </div>
+                <button class="btn-export" onclick="exportProducts()">📤 Exportar</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar producto..." autocomplete="off">
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="productName">Nombre del Producto</label>
+                    <input type="text" id="productName" placeholder="Ej: Coca Cola 2L" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="productCode">Código</label>
+                    <input type="text" id="productCode" placeholder="Ej: 123456" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Precio ($)</label>
+                    <input type="number" id="productPrice" placeholder="Ej: 1500" step="1" autocomplete="off">
+                </div>
+                <button class="btn btn-primary" onclick="addProduct()">➕ Agregar Producto</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-label">Productos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="visibleProducts">0</div>
+                    <div class="stat-label">Mostrados</div>
+                </div>
+            </div>
+
+            <div class="products-list" id="productsList"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script>
+        let products = [];
+        let cart = [];
+        let editingId = null;
+        let selectedPaymentMethod = null;
+        let codeReader = null;
+        let scanning = false;
+
+        window.onload = function() {
+            loadProducts();
+            loadCart();
+            renderProducts();
+            renderCart();
+        };
+
+        // TABS
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+            
+            if (tab === 'venta') {
+                stopScanner();
+            }
+        }
+
+        // SCANNER
+        async function startScanner() {
+            try {
+                // Verificar si el navegador soporta cámara
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    showNotification('❌ Tu navegador no soporta acceso a cámara', true);
+                    showCameraHelp('not_supported');
+                    return;
+                }
+
+                const scannerContainer = document.getElementById('scannerContainer');
+                const video = document.getElementById('scanner-video');
+                const btnStart = document.getElementById('btnStartScan');
+                const btnStop = document.getElementById('btnStopScan');
+
+                codeReader = new ZXing.BrowserMultiFormatReader();
+                
+                scannerContainer.style.display = 'block';
+                btnStart.style.display = 'none';
+                btnStop.style.display = 'inline-block';
+                scanning = true;
+
+                // Intentar acceder a la cámara
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                
+                video.srcObject = stream;
+                video.play();
+
+                showNotification('✅ Escáner activado - Apunta al código de barras');
+
+                codeReader.decodeFromVideoDevice(null, 'scanner-video', (result, err) => {
+                    if (result && scanning) {
+                        const code = result.text;
+                        showNotification('📱 Código detectado: ' + code);
+                        searchAndAddProductByCode(code);
+                        // Dar feedback visual
+                        video.style.border = '5px solid #00ff00';
+                        setTimeout(() => { video.style.border = 'none'; }, 500);
+                    }
+                });
+
+            } catch (error) {
+                stopScanner();
+                
+                // Detectar tipo de error
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    showNotification('❌ Permiso de cámara denegado', true);
+                    showCameraHelp('permission_denied');
+                } else if (error.name === 'NotFoundError') {
+                    showNotification('❌ No se encontró cámara en el dispositivo', true);
+                    showCameraHelp('no_camera');
+                } else if (error.name === 'NotReadableError') {
+                    showNotification('❌ La cámara está siendo usada por otra app', true);
+                    showCameraHelp('camera_in_use');
+                } else if (error.name === 'SecurityError') {
+                    showNotification('❌ Error de seguridad - Usa HTTPS o archivo local', true);
+                    showCameraHelp('security_error');
+                } else {
+                    showNotification('❌ Error: ' + error.message, true);
+                    showCameraHelp('generic_error');
+                }
+            }
+        }
+
+        function showCameraHelp(errorType) {
+            const helpMessages = {
+                'permission_denied': `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin: 0 0 10px 0; color: #856404;">🔒 Permiso de Cámara Denegado</h4>
+                        <p style="margin: 0 0 10px 0; font-size: 14px;"><strong>Para activar la cámara:</strong></p>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+                            <li><strong>Chrome Android:</strong> Toca el candado/ícono junto a la URL → Permisos → Cámara → Permitir</li>
+                            <li><strong>Safari iPhone:</strong> Ajustes → Safari → Cámara → Permitir</li>
+                            <li><strong>Firefox:</strong> Toca el ícono de información → Permisos → Cámara → Permitir</li>
+                        </ul>
+                        <p style="margin: 10px 0 0 0; font-size: 13px;">Luego recarga la página y vuelve a intentar.</p>
+                        <p style="margin: 10px 0 0 0; font-size: 13px; color: #28a745;"><strong>💡 Mientras tanto:</strong> Usa el ingreso manual de código más abajo.</p>
+                    </div>
+                `,
+                'not_supported': `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px; border-left: 4px solid #dc3545;">
+                        <h4 style="margin: 0 0 10px 0; color: #721c24;">⚠️ Navegador No Compatible</h4>
+                        <p style="margin: 0; font-size: 14px;">Tu navegador no soporta acceso a la cámara.</p>
+                        <p style="margin: 10px 0 0 0; font-size: 13px; color: #28a745;"><strong>💡 Solución:</strong> Usa el ingreso manual de código más abajo.</p>
+                    </div>
+                `,
+                'no_camera': `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px; border-left: 4px solid #dc3545;">
+                        <h4 style="margin: 0 0 10px 0; color: #721c24;">📷 No se encontró cámara</h4>
+                        <p style="margin: 0; font-size: 14px;">No se detectó ninguna cámara en tu dispositivo.</p>
+                        <p style="margin: 10px 0 0 0; font-size: 13px; color: #28a745;"><strong>💡 Solución:</strong> Usa el ingreso manual de código más abajo.</p>
+                    </div>
+                `,
+                'camera_in_use': `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin: 0 0 10px 0; color: #856404;">📱 Cámara en Uso</h4>
+                        <p style="margin: 0; font-size: 14px;">Otra aplicación está usando la cámara.</p>
+                        <p style="margin: 10px 0 0 0; font-size: 13px;">Cierra otras apps que usen la cámara e intenta de nuevo.</p>
+                        <p style="margin: 10px 0 0 0; font-size: 13px; color: #28a745;"><strong>💡 Mientras tanto:</strong> Usa el ingreso manual de código más abajo.</p>
+                    </div>
+                `,
+                'security_error': `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px; border-left: 4px solid #dc3545;">
+                        <h4 style="margin: 0 0 10px 0; color: #721c24;">🔐 Error de Seguridad</h4>
+                        <p style="margin: 0 0 10px 0; font-size: 14px;">Los navegadores solo permiten acceso a cámara en sitios seguros (HTTPS) o archivos locales abiertos directamente.</p>
+                        <p style="margin: 0; font-size: 13px; color: #28a745;"><strong>💡 Solución:</strong> Usa el ingreso manual de código más abajo.</p>
+                    </div>
+                `,
+                'generic_error': `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px; border-left: 4px solid #dc3545;">
+                        <h4 style="margin: 0 0 10px 0; color: #721c24;">❌ Error al acceder a la cámara</h4>
+                        <p style="margin: 0; font-size: 14px;">Hubo un problema al intentar acceder a la cámara.</p>
+                        <p style="margin: 10px 0 0 0; font-size: 13px; color: #28a745;"><strong>💡 Solución:</strong> Usa el ingreso manual de código más abajo.</p>
+                    </div>
+                `
+            };
+
+            const helpContainer = document.getElementById('cameraHelpMessage');
+            if (helpContainer) {
+                helpContainer.innerHTML = helpMessages[errorType] || helpMessages['generic_error'];
+                helpContainer.style.display = 'block';
+            }
+        }
+
+        function stopScanner() {
+            scanning = false;
+            const video = document.getElementById('scanner-video');
+            const stream = video.srcObject;
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            
+            if (codeReader) {
+                codeReader.reset();
+            }
+
+            document.getElementById('scannerContainer').style.display = 'none';
+            document.getElementById('btnStartScan').style.display = 'inline-block';
+            document.getElementById('btnStopScan').style.display = 'none';
+            
+            // Limpiar mensaje de ayuda
+            const helpContainer = document.getElementById('cameraHelpMessage');
+            if (helpContainer) {
+                helpContainer.style.display = 'none';
+            }
+        }
+
+        function searchAndAddProduct() {
+            const code = document.getElementById('manualCode').value.trim();
+            if (!code) {
+                showNotification('Ingresa un código', true);
+                return;
+            }
+            searchAndAddProductByCode(code);
+            document.getElementById('manualCode').value = '';
+        }
+
+        function searchAndAddProductByCode(code) {
+            const product = products.find(p => p.code === code);
+            if (product) {
+                addToCart(product);
+                showNotification('✅ ' + product.name + ' agregado');
+            } else {
+                showNotification('❌ Producto no encontrado', true);
+            }
+        }
+
+        // CARRITO
+        function addToCart(product) {
+            const existingItem = cart.find(item => item.code === product.code);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: 1
+                });
+            }
+            
+            saveCart();
+            renderCart();
+        }
+
+        function updateQuantity(code, delta) {
+            const item = cart.find(item => item.code === code);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(code);
+                } else {
+                    saveCart();
+                    renderCart();
+                }
+            }
+        }
+
+        function removeFromCart(code) {
+            cart = cart.filter(item => item.code !== code);
+            saveCart();
+            renderCart();
+        }
+
+        function clearCart() {
+            if (confirm('¿Vaciar toda la canasta?')) {
+                cart = [];
+                selectedPaymentMethod = null;
+                saveCart();
+                renderCart();
+                showNotification('🗑️ Canasta vaciada');
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            const emptyCart = document.getElementById('emptyCart');
+            const cartTotal = document.getElementById('cartTotal');
+            const paymentSection = document.getElementById('paymentSection');
+            const cartBadge = document.getElementById('cartBadge');
+
+            // Actualizar badge
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                cartBadge.textContent = totalItems;
+                cartBadge.style.display = 'flex';
+            } else {
+                cartBadge.style.display = 'none';
+            }
+
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                emptyCart.style.display = 'block';
+                cartTotal.style.display = 'none';
+                paymentSection.style.display = 'none';
+                return;
+            }
+
+            emptyCart.style.display = 'none';
+            cartTotal.style.display = 'block';
+            paymentSection.style.display = 'block';
+
+            let subtotal = 0;
+            
+            container.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-details">Código: ${item.code} | $${item.price.toLocaleString('es-CL')} c/u</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="cart-item-quantity">
+                                <button class="btn-qty" onclick="updateQuantity('${item.code}', -1)">-</button>
+                                <span class="qty-display">${item.quantity}</span>
+                                <button class="btn-qty" onclick="updateQuantity('${item.code}', 1)">+</button>
+                            </div>
+                            <div class="cart-item-price">$${itemTotal.toLocaleString('es-CL')}</div>
+                            <button class="btn-remove" onclick="removeFromCart('${item.code}')">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('subtotal').textContent = '$' + subtotal.toLocaleString('es-CL');
+            document.getElementById('total').textContent = '$' + subtotal.toLocaleString('es-CL');
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.target.closest('.payment-method').classList.add('selected');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('❌ La canasta está vacía', true);
+                return;
+            }
+
+            if (!selectedPaymentMethod) {
+                showNotification('❌ Selecciona una forma de pago', true);
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const paymentText = selectedPaymentMethod === 'efectivo' ? 'Efectivo' : 'Débito';
+            
+            if (confirm(`Finalizar venta:\nTotal: $${total.toLocaleString('es-CL')}\nPago: ${paymentText}\n\n¿Confirmar?`)) {
+                showNotification(`✅ Venta finalizada - ${paymentText} - $${total.toLocaleString('es-CL')}`);
+                cart = [];
+                selectedPaymentMethod = null;
+                saveCart();
+                renderCart();
+                
+                // Limpiar selección de pago
+                document.querySelectorAll('.payment-method').forEach(el => {
+                    el.classList.remove('selected');
+                });
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('minimarket_cart', JSON.stringify(cart));
+        }
+
+        function loadCart() {
+            const stored = localStorage.getItem('minimarket_cart');
+            if (stored) {
+                cart = JSON.parse(stored);
+            }
+        }
+
+        // PRODUCTOS
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            renderProducts(e.target.value);
+        });
+
+        ['productName', 'productCode', 'productPrice'].forEach(id => {
+            document.getElementById(id).addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addProduct();
+            });
+        });
+
+        function loadProducts() {
+            const stored = localStorage.getItem('minimarket_products');
+            if (stored) {
+                products = JSON.parse(stored);
+            }
+        }
+
+        function saveProducts() {
+            localStorage.setItem('minimarket_products', JSON.stringify(products));
+        }
+
+        function addProduct() {
+            const name = document.getElementById('productName').value.trim();
+            const code = document.getElementById('productCode').value.trim();
+            const price = document.getElementById('productPrice').value.trim();
+
+            if (!name || !code || !price) {
+                showNotification('⚠️ Completa todos los campos', true);
+                return;
+            }
+
+            if (editingId !== null) {
+                const index = products.findIndex(p => p.id === editingId);
+                products[index] = { id: editingId, name, code, price: parseFloat(price) };
+                editingId = null;
+                document.querySelector('.btn-primary').textContent = '➕ Agregar Producto';
+                showNotification('✅ Producto actualizado');
+            } else {
+                products.unshift({ id: Date.now(), name, code, price: parseFloat(price) });
+                showNotification('✅ Producto agregado');
+            }
+
+            saveProducts();
+            clearForm();
+            renderProducts();
+            document.getElementById('searchInput').value = '';
+        }
+
+        function clearForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productCode').value = '';
+            document.getElementById('productPrice').value = '';
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productCode').value = product.code;
+                document.getElementById('productPrice').value = product.price;
+                editingId = id;
+                document.querySelector('.btn-primary').textContent = '✏️ Guardar Cambios';
+            }
+        }
+
+        function deleteProduct(id) {
+            if (confirm('¿Eliminar este producto?')) {
+                products = products.filter(p => p.id !== id);
+                saveProducts();
+                renderProducts();
+                showNotification('🗑️ Producto eliminado');
+            }
+        }
+
+        function renderProducts(searchTerm = '') {
+            const container = document.getElementById('productsList');
+            const search = searchTerm.toLowerCase();
+            
+            const filteredProducts = products.filter(p => 
+                p.name.toLowerCase().includes(search) || 
+                p.code.toLowerCase().includes(search)
+            );
+
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('visibleProducts').textContent = filteredProducts.length;
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No hay productos</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-header">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-actions">
+                            <button class="btn-icon" onclick="editProduct(${product.id})">✏️</button>
+                            <button class="btn-icon" onclick="deleteProduct(${product.id})">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="info-item">
+                            <div class="info-label">Código</div>
+                            <div class="info-value">${product.code}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Precio</div>
+                            <div class="info-value price">$${product.price.toLocaleString('es-CL')}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function importFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const fileName = file.name.toLowerCase();
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    let importedProducts = [];
+                    
+                    if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
+                        const text = e.target.result;
+                        const lines = text.split('\n');
+                        
+                        for (let i = 0; i < lines.length; i++) {
+                            const line = lines[i].trim();
+                            if (!line) continue;
+                            
+                            let parts = line.split(',');
+                            if (parts.length < 3) parts = line.split(';');
+                            if (parts.length < 3) parts = line.split('\t');
+                            
+                            if (parts.length >= 3) {
+                                const name = parts[0].trim().replace(/^"|"$/g, '');
+                                const code = parts[1].trim().replace(/^"|"$/g, '');
+                                const price = parseFloat(parts[2].trim().replace(/[^0-9.]/g, ''));
+                                
+                                if (name && code && !isNaN(price)) {
+                                    importedProducts.push({
+                                        id: Date.now() + i,
+                                        name,
+                                        code,
+                                        price
+                                    });
+                                }
+                            }
+                        }
+                    } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                        
+                        for (let i = 0; i < rows.length; i++) {
+                            const row = rows[i];
+                            if (row.length >= 3) {
+                                const name = String(row[0]).trim();
+                                const code = String(row[1]).trim();
+                                const price = parseFloat(String(row[2]).replace(/[^0-9.]/g, ''));
+                                
+                                if (name && code && !isNaN(price)) {
+                                    importedProducts.push({
+                                        id: Date.now() + i,
+                                        name,
+                                        code,
+                                        price
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    if (importedProducts.length > 0) {
+                        if (confirm(`¿Importar ${importedProducts.length} productos?`)) {
+                            products = [...importedProducts, ...products];
+                            saveProducts();
+                            renderProducts();
+                            showNotification(`✅ ${importedProducts.length} productos importados`);
+                        }
+                    } else {
+                        showNotification('❌ No se encontraron productos válidos', true);
+                    }
+                } catch (error) {
+                    showNotification('❌ Error: ' + error.message, true);
+                }
+            };
+
+            if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                reader.readAsArrayBuffer(file);
+            } else {
+                reader.readAsText(file);
+            }
+
+            event.target.value = '';
+        }
+
+        function exportProducts() {
+            if (products.length === 0) {
+                showNotification('⚠️ No hay productos para exportar', true);
+                return;
+            }
+
+            let csv = 'Nombre,Código,Precio\n';
+            products.forEach(p => {
+                csv += `"${p.name}","${p.code}",${p.price}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `productos_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification(`✅ ${products.length} productos exportados`);
+        }
+
+        function showNotification(message, isError = false) {
+            const notification = document.createElement('div');
+            notification.className = 'notification' + (isError ? ' error' : '');
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
